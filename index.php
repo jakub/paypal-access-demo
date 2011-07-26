@@ -50,10 +50,10 @@ if (isset($_GET['session']) && $_GET['session'] === 'delete') {
 
 </section>
 
-<script src="https://www.paypalobjects.com/js/external/dg.js"></script>
+<script src="https://www.paypalobjects.com/js/external/identity.js"></script>
 
 <script>
-    var dg = new PAYPAL.apps.DGFlow({ trigger: "submitBtn", expType: "mini" }); 
+    var dg = new PAYPAL.apps.IdentityFlow({ trigger: "submitBtn" }); 
 </script>
 
 </body>
