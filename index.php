@@ -24,31 +24,44 @@ if (isset($_GET['session']) && $_GET['session'] === 'delete') {
 <head>
 	<meta charset="utf-8">
 	<title>PayPal Identity Demo - PHP with Janrain library</title>
+	<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header>
-	<h1>PayPal Identity Demo - PHP with Janrain library</h1>
-</header>
+<h1>PayPal Identity Demo</h1>
+<p id="subtitle">A <a href="https://github.com/jakub/paypal-identity-demo">PHP example</a> using the <a href="http://www.janrain.com/openid-enabled">open-source Janrain library</a>.</p>
 
-<section id="login">
+<div id="login">
 	<form action="rp.php" method="post">
 		<input type="image" src="https://www.paypal.com/en_US/i/btn/login-with-paypal-button.png" name="submitBtn" id="submitBtn" alt="Log in with PayPal" />
 	</form>
-</section>
-
-<section id="user">
+</div>
 
 <?php if (isset($_SESSION['openid'])) { ?>
 
+	<div id="user">
 	<h2>Welcome, <?php echo $_SESSION['openid']['http://axschema.org/namePerson/first'][0] ?></h2>	
 	<p><a href="index.php?session=delete">Delete session data</a></p>
-	<pre><?php print_r($_SESSION['openid']); ?></pre>
+	
+	<table>
+	
+	<?php 	
+		$c = 0;
+		foreach ($_SESSION['openid'] as $key => $value) {
+			if ($value) {
+				echo "<tr class='" . (($c++%2==1) ? 'odd' : 'even') . "'><td>" . $key . "</td><td>" . $value[0] . "</td></tr>";
+			} else {
+				echo "<tr class='" . (($c++%2==1) ? 'odd' : 'even') . "'><td>" . $key . "</td><td></td></tr>";
+			}
+		}	
+	?>	
+	</table>
+	</div>
 	
 <?php } ?>	
 
-</section>
+
 
 <script src="https://www.paypalobjects.com/js/external/identity.js"></script>
 
