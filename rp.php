@@ -58,5 +58,5 @@ foreach($attribute as $attr){
 
 $auth->addExtension($ax);
 
-$url = $auth->redirectURL('https://identity.jakub.me', 'https://identity.jakub.me/openid/verify.php');
+$url = $auth->redirectURL('https://identity.jakub.me', 'https://identity.jakub.me/verify.php');
 header('Location: ' . $url);

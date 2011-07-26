@@ -7,7 +7,7 @@ require_once "Auth/OpenID/AX.php";
 session_start();
 $store = new Auth_OpenID_FileStore('./tmp');
 $consumer = new Auth_OpenID_Consumer($store);
-$response = $consumer->complete('https://identity.jakub.me/openid/verify.php');
+$response = $consumer->complete('https://identity.jakub.me/verify.php');
 
 if ($response->status == Auth_OpenID_SUCCESS) {
 
