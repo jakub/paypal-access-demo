@@ -23,7 +23,7 @@ if (isset($_GET['session']) && $_GET['session'] === 'delete') {
 
 <head>
 	<meta charset="utf-8">
-	<title>PayPal Identity PHP Demo</title>
+	<title>PayPal Identity Demo - PHP with Janrain library</title>
 </head>
 
 <body>
@@ -53,7 +53,7 @@ if (isset($_GET['session']) && $_GET['session'] === 'delete') {
 <script src="https://www.paypalobjects.com/js/external/identity.js"></script>
 
 <script>
-    var dg = new PAYPAL.apps.IdentityFlow({ trigger: "submitBtn" }); 
+    var identity = new PAYPAL.apps.IdentityFlow({ trigger: "submitBtn" }); 
 </script>
 
 </body>
