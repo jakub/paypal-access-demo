@@ -2,21 +2,23 @@ html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abb
 
 body {
 	font-family: "Lucida Grande", Calibri, sans-serif;
-	padding: 2em;
+	padding: 1em 3em 1em 3em;
 	font-size: 16px;
 	line-height: 16px;
 }
 
 h1 {
 	font-size: 1.5em;
-	margin: 1em 0 1em 0;
+	margin: 0 0 3em 0;
 	font-weight: bold;
+	float: left;
 }
 
 h2 {
 	font-size: 1.2em;
-	margin: 1em 0 1em 0;
+	margin: 0 0 1em 0;
 	font-weight: bold;
+	float: left;
 }
 
 a {
@@ -27,18 +29,21 @@ p, div {
 	margin-bottom: 1em;
 }
 
-p#subtitle {
-	font-style: italic;
+.aside {
 	float: right;
+	text-align: right;
 }
 
-
-div#user {
-	border-top: 1px solid #ccc;
+div.aside {
+	font-style: italic;
 }
 
 div#user a {
 	font-weight: bold;
+}
+
+table {
+	width: 700px;
 }
 
 td {
@@ -48,4 +53,30 @@ td {
 
 tr.odd {
 	background-color: #efefef;
+}
+	
+#login, #user {
+	clear: both;
+	margin: 0 auto 0 auto;
+	width: 700px;
+}
+
+form {
+	border: 1px solid #666;
+	background-color: #f9f9f9;
+	width: 250px;
+	padding: 0.5em;
+	margin: 0 0 3em 0;
+	text-align: center;
+	float: left;
+	display: block;
+}
+
+#form_without_popup {
+	float: right;
+}
+
+label {
+	display: block;
+	margin-bottom: 1em;
 }

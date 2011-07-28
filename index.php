@@ -30,11 +30,21 @@ if (isset($_GET['session']) && $_GET['session'] === 'delete') {
 <body>
 
 <h1>PayPal Identity Demo</h1>
-<p id="subtitle">A <a href="https://github.com/jakub/paypal-identity-demo">PHP example</a> using the <a href="http://www.janrain.com/openid-enabled">open-source Janrain library</a>.</p>
+
+<div class="aside">
+	<p>A <a href="https://github.com/jakub/paypal-identity-demo">PHP example</a> using the <a href="http://www.janrain.com/openid-enabled">open-source Janrain library</a>.</p>
+	<p>Note: you must have JavaScript enabled.</p>
+</div>
 
 <div id="login">
-	<form action="rp.php" method="post">
-		<input type="image" src="https://www.paypal.com/en_US/i/btn/login-with-paypal-button.png" name="submitBtn" id="submitBtn" alt="Log in with PayPal" />
+	<form action="rp.php?popup=true" method="post">
+		<label for="submit_with_popup">Use popup flow</label>
+		<input type="image" src="https://www.paypal.com/en_US/i/btn/login-with-paypal-button.png" name="submit_with_popup" id="submit_with_popup" alt="Log in with PayPal" />
+	</form>
+
+	<form action="rp.php" method="post" id="form_without_popup">
+		<label for="submit_without_popup">Use inline flow</label>
+		<input type="image" src="https://www.paypal.com/en_US/i/btn/login-with-paypal-button.png" name="submit_without_popup" id="submit_without_popup" alt="Log in with PayPal" />
 	</form>
 </div>
 
@@ -42,7 +52,7 @@ if (isset($_GET['session']) && $_GET['session'] === 'delete') {
 
 	<div id="user">
 	<h2>Welcome, <?php echo $_SESSION['openid']['http://axschema.org/namePerson/first'][0] ?></h2>	
-	<p><a href="index.php?session=delete">Delete session data</a></p>
+	<p class="aside"><a href="index.php?session=delete">Delete session data</a></p>
 	
 	<table>
 	
@@ -62,11 +72,10 @@ if (isset($_GET['session']) && $_GET['session'] === 'delete') {
 <?php } ?>	
 
 
-
 <script src="https://www.paypalobjects.com/js/external/identity.js"></script>
 
-<script>
-    var identity = new PAYPAL.apps.IdentityFlow({ trigger: "submitBtn" }); 
+<script>	
+	var identity  = new PAYPAL.apps.IdentityFlow({ trigger: "submit_with_popup" });
 </script>
 
 </body>

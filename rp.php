@@ -58,5 +58,13 @@ foreach($attribute as $attr){
 
 $auth->addExtension($ax);
 
-$url = $auth->redirectURL('https://identity.jakub.me', 'https://identity.jakub.me/verify.php');
+$scriptPath = implode("/", (explode('/', $_SERVER["REQUEST_URI"], -1)));
+
+if (isset($_GET['popup'])) {
+	$returnScript = $scriptPath . '/verify.php?popup=true';
+} else {
+	$returnScript = $scriptPath . '/verify.php';
+}
+
+$url = $auth->redirectURL('https://' . $_SERVER["SERVER_NAME"], 'https://' . $_SERVER["SERVER_NAME"] . $returnScript);
 header('Location: ' . $url);
