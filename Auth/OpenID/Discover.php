@@ -205,7 +205,7 @@ class Auth_OpenID_ServiceEndpoint {
      */
     function consumerFromXRDS($uri, $xrds_text)
     {
-        $xrds =& Auth_Yadis_XRDS::parseXRDS($xrds_text);
+        $xrds = Auth_Yadis_XRDS::parseXRDS($xrds_text);
 
         if ($xrds) {
             $yadis_services =

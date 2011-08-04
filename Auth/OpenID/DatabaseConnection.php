@@ -13,7 +13,7 @@
 /**
  * An empty base class intended to emulate PEAR connection
  * functionality in applications that supply their own database
- * abstraction mechanisms.  See {@link Auth_OpenID_SQLStore} for more
+ * abstraction mechanisms.  See {@link Auth_OpenID_Store_SQLStore} for more
  * information.  You should subclass this class if you need to create
  * an SQL store that needs to access its database using an
  * application's database abstraction layer instead of a PEAR database

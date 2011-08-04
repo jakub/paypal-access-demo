@@ -160,19 +160,22 @@ class Auth_OpenID {
           // going to emulate the behavior of some other environments
           // by defaulting to GET and overwriting with POST if POST
           // data is available.
-          $data = Auth_OpenID::params_from_string($_SERVER['QUERY_STRING']);
+        	$query = parse_url($_SERVER['REQUEST_URI'],PHP_URL_QUERY);
+        	if(!empty($query)) {
+        		$data = Auth_OpenID::params_from_string($query);
+        	}
 
-          if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $str = file_get_contents('php://input');
+        	if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        		$str = file_get_contents('php://input');
 
-            if ($str === false) {
-              $post = array();
-            } else {
-              $post = Auth_OpenID::params_from_string($str);
-            }
+	            if ($str === false) {
+	            	$post = array();
+	            } else {
+	            	$post = Auth_OpenID::params_from_string($str);
+	            }
 
-            $data = array_merge($data, $post);
-          }
+	            $data = array_merge($data, $post);
+        	}
         }
 
         return $data;

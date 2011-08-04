@@ -43,7 +43,7 @@
  * Import message and extension internals.
  */
 require_once 'Auth/OpenID/Message.php';
-require_once 'Auth/OpenID/Extension.php';
+require_once 'Auth/OpenID/Extension/Extension.php';
 
 // The data fields that are listed in the sreg spec
 global $Auth_OpenID_sreg_data_fields;

@@ -663,7 +663,7 @@ class Auth_OpenID_Message {
         $form = "<form accept-charset=\"UTF-8\" ".
             "enctype=\"application/x-www-form-urlencoded\"";
 
-        if (!$form_tag_attrs) {
+        if (empty($form_tag_attrs)) {
             $form_tag_attrs = array();
         }
 
@@ -673,10 +673,8 @@ class Auth_OpenID_Message {
         unset($form_tag_attrs['enctype']);
         unset($form_tag_attrs['accept-charset']);
 
-        if ($form_tag_attrs) {
-            foreach ($form_tag_attrs as $name => $attr) {
-                $form .= sprintf(" %s=\"%s\"", $name, $attr);
-            }
+        foreach ($form_tag_attrs as $name => $attr) {
+        	$form .= sprintf(" %s=\"%s\"", $name, $attr);
         }
 
         $form .= ">\n";

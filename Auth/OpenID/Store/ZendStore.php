@@ -1,16 +1,18 @@
 <?php
 
 /**
- * This file supplies a memcached store backend for OpenID servers and
+ * This file supplies a Zend store backend for OpenID servers and
  * consumers.
  *
- * PHP versions 4 and 5
+ * PHP versions 5
  *
  * LICENSE: See the COPYING file included in this distribution.
  *
  * @package OpenID
  * @author Artemy Tregubenko <me@arty.name>
+ * @author Ivan Borzenkov <ivan1986@list.ru>
  * @copyright 2008 JanRain, Inc.
+ * @copyright 2010 Ivan Borzenkov <ivan1986@list.ru>
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache
  * Contributed by Open Web Technologies <http://openwebtech.ru/>
  */
@@ -18,14 +20,11 @@
 /**
  * Import the interface for creating a new store class.
  */
-require_once 'Auth/OpenID/Interface.php';
+require_once 'Auth/OpenID/Store/Interface.php';
 
 /**
- * This is a memcached-based store for OpenID associations and
- * nonces. 
- * 
- * As memcache has limit of 250 chars for key length, 
- * server_url, handle and salt are hashed with sha1(). 
+ * This is a Zend_Cache_Backend_Interface-based store for
+ * OpenID associations and nonces.
  *
  * Most of the methods of this class are implementation details.
  * People wishing to just use this store need only pay attention to
@@ -33,59 +32,51 @@ require_once 'Auth/OpenID/Interface.php';
  *
  * @package OpenID
  */
-class Auth_OpenID_MemcachedStore extends Auth_OpenID_OpenIDStore {
+class Auth_OpenID_Store_ZendStore implements Auth_OpenID_Store_OpenIDStore {
 
     /**
-     * Initializes a new {@link Auth_OpenID_MemcachedStore} instance.
-     * Just saves memcached object as property.
+     * Initializes a new {@link Auth_OpenID_ZendStore} instance.
+     * Just saves connection object as property.
      *
-     * @param resource connection Memcache connection resourse
+     * @param Zend_Cache_Backend_Interface $connection resourse
      */
-    function Auth_OpenID_MemcachedStore($connection, $compress = false)
-    {
+    function __construct(Zend_Cache_Backend_Interface $connection) {
         $this->connection = $connection;
-        $this->compress = $compress ? MEMCACHE_COMPRESSED : 0;
     }
 
     /**
-     * Store association until its expiration time in memcached. 
-     * Overwrites any existing association with same server_url and 
-     * handle. Handles list of associations for every server. 
+     * Store association.
+     * Overwrites any existing association with same server_url and
+     * handle. Handles list of associations for every server.
      */
-    function storeAssociation($server_url, $association)
-    {
-        // create memcached keys for association itself 
+    function storeAssociation($server_url, $association) {
+        // create keys for association itself
         // and list of associations for this server
-        $associationKey = $this->associationKey($server_url, 
-            $association->handle);
+        $associationKey = $this->associationKey($server_url, $association->handle);
         $serverKey = $this->associationServerKey($server_url);
-        
-        // get list of associations 
-        $serverAssociations = $this->connection->get($serverKey);
-        
+
+        // get list of associations
+        $serverAssociations = $this->connection->load($serverKey);
+
         // if no such list, initialize it with empty array
         if (!$serverAssociations) {
             $serverAssociations = array();
         }
         // and store given association key in it
         $serverAssociations[$association->issued] = $associationKey;
-        
-        // save associations' keys list 
-        $this->connection->set(
-            $serverKey,
-            $serverAssociations,
-            $this->compress
-        );
+
+        // save associations' keys list
+        $this->connection->save( $serverAssociations, $serverKey );
         // save association itself
-        $this->connection->set(
+        $this->connection->save(
+            $association,
             $associationKey,
-            $association, 
-            $this->compress, 
-            $association->issued + $association->lifetime);
+            array(),
+            $association->lifetime);
     }
 
     /**
-     * Read association from memcached. If no handle given 
+     * Read association. If no handle given
      * and multiple associations found, returns latest issued
      */
     function getAssociation($server_url, $handle = null)
@@ -93,109 +84,109 @@ class Auth_OpenID_MemcachedStore extends Auth_OpenID_OpenIDStore {
         // simple case: handle given
         if ($handle !== null) {
             // get association, return null if failed
-            $association = $this->connection->get(
+            $association = $this->connection->load(
                 $this->associationKey($server_url, $handle));
             return $association ? $association : null;
         }
-        
+
         // no handle given, working with list
         // create key for list of associations
         $serverKey = $this->associationServerKey($server_url);
-        
+
         // get list of associations
-        $serverAssociations = $this->connection->get($serverKey);
+        $serverAssociations = $this->connection->load($serverKey);
         // return null if failed or got empty list
         if (!$serverAssociations) {
             return null;
         }
-        
+
         // get key of most recently issued association
         $keys = array_keys($serverAssociations);
         sort($keys);
         $lastKey = $serverAssociations[array_pop($keys)];
-        
+
         // get association, return null if failed
-        $association = $this->connection->get($lastKey);
+        $association = $this->connection->load($lastKey);
         return $association ? $association : null;
     }
 
     /**
-     * Immediately delete association from memcache.
+     * Immediately delete association.
      */
     function removeAssociation($server_url, $handle)
     {
-        // create memcached keys for association itself 
+        // create keys for association itself
         // and list of associations for this server
         $serverKey = $this->associationServerKey($server_url);
-        $associationKey = $this->associationKey($server_url, 
+        $associationKey = $this->associationKey($server_url,
             $handle);
-        
+
         // get list of associations
-        $serverAssociations = $this->connection->get($serverKey);
+        $serverAssociations = $this->connection->load($serverKey);
         // return null if failed or got empty list
         if (!$serverAssociations) {
             return false;
         }
-        
+
         // ensure that given association key exists in list
         $serverAssociations = array_flip($serverAssociations);
         if (!array_key_exists($associationKey, $serverAssociations)) {
             return false;
         }
-        
+
         // remove given association key from list
         unset($serverAssociations[$associationKey]);
         $serverAssociations = array_flip($serverAssociations);
-        
+
         // save updated list
-        $this->connection->set(
-            $serverKey,
+        $this->connection->save(
             $serverAssociations,
-            $this->compress
+            $serverKey
         );
 
-        // delete association 
-        return $this->connection->delete($associationKey);
+        // delete association
+        return $this->connection->remove($associationKey);
     }
 
     /**
-     * Create nonce for server and salt, expiring after 
+     * Create nonce for server and salt, expiring after
      * $Auth_OpenID_SKEW seconds.
      */
     function useNonce($server_url, $timestamp, $salt)
     {
         global $Auth_OpenID_SKEW;
-        
-        // save one request to memcache when nonce obviously expired 
+
+        // save one request when nonce obviously expired
         if (abs($timestamp - time()) > $Auth_OpenID_SKEW) {
             return false;
         }
-        
+
         // returns false when nonce already exists
         // otherwise adds nonce
-        return $this->connection->add(
-            'openid_nonce_' . sha1($server_url) . '_' . sha1($salt), 
-            1, // any value here 
-            $this->compress, 
-            $Auth_OpenID_SKEW);
+        $key = 'openid_nonce_' . sha1($server_url) . '_' . sha1($salt);
+        if ($this->connection->test($key))
+            return false;
+
+        $this->connection->save(1, $key, array(), $Auth_OpenID_SKEW);
+        return true;
     }
-    
+
     /**
-     * Memcache key is prefixed with 'openid_association_' string. 
+     * Association key is prefixed with 'openid_association_' string.
      */
-    function associationKey($server_url, $handle = null) 
+    function associationKey($server_url, $handle = null)
     {
         return 'openid_association_' . sha1($server_url) . '_' . sha1($handle);
     }
-    
+
     /**
-     * Memcache key is prefixed with 'openid_association_' string. 
+     * Server key is prefixed with 'openid_association_' string.
      */
-    function associationServerKey($server_url) 
+    function associationServerKey($server_url)
     {
         return 'openid_association_server_' . sha1($server_url);
     }
-    
+
     /**
      * Report that this storage doesn't support cleanup
      */

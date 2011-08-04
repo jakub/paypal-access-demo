@@ -16,7 +16,7 @@
 /**
  * @access private
  */
-require_once 'Auth/OpenID/Interface.php';
+require_once 'Auth/OpenID/Store/Interface.php';
 require_once 'Auth/OpenID/Nonce.php';
 
 /**
@@ -54,7 +54,7 @@ require_once 'Auth/OpenID/Nonce.php';
  *
  * @package OpenID
  */
-class Auth_OpenID_SQLStore extends Auth_OpenID_OpenIDStore {
+class Auth_OpenID_Store_SQLStore implements Auth_OpenID_Store_OpenIDStore {
 
     /**
      * This creates a new SQLStore instance.  It requires an
@@ -75,7 +75,7 @@ class Auth_OpenID_SQLStore extends Auth_OpenID_OpenIDStore {
      * the name of the table used for storing nonces.  The default
      * value is 'oid_nonces'.
      */
-    function Auth_OpenID_SQLStore($connection,
+    function Auth_OpenID_Store_SQLStore($connection,
                                   $associations_table = null,
                                   $nonces_table = null)
     {
@@ -88,7 +88,7 @@ class Auth_OpenID_SQLStore extends Auth_OpenID_OpenIDStore {
               (is_subclass_of($connection, 'db_common') ||
                is_subclass_of($connection,
                               'auth_openid_databaseconnection')))) {
-            trigger_error("Auth_OpenID_SQLStore expected PEAR connection " .
+            trigger_error("Auth_OpenID_Store_SQLStore expected PEAR connection " .
                           "object (got ".get_class($connection).")",
                           E_USER_ERROR);
             return;

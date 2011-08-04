@@ -9,14 +9,14 @@
 /**
  * Require the base class file.
  */
-require_once "Auth/OpenID/SQLStore.php";
+require_once "Auth/OpenID/Store/SQLStore.php";
 
 /**
  * An SQL store that uses MySQL as its backend.
  *
  * @package OpenID
  */
-class Auth_OpenID_MySQLStore extends Auth_OpenID_SQLStore {
+class Auth_OpenID_Store_MySQLStore extends Auth_OpenID_Store_SQLStore {
     /**
      * @access private
      */

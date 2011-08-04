@@ -1,11 +1,11 @@
 <?php
 
 require_once "Auth/OpenID/Consumer.php";
-require_once "Auth/OpenID/FileStore.php";
-require_once "Auth/OpenID/AX.php";
+require_once "Auth/OpenID/Store/FileStore.php";
+require_once "Auth/OpenID/Extension/AX.php";
 
 session_start();
-$store = new Auth_OpenID_FileStore('./tmp');
+$store = new Auth_OpenID_Store_FileStore('./tmp');
 $consumer = new Auth_OpenID_Consumer($store);
 $scriptPath = implode("/", (explode('/', $_SERVER["REQUEST_URI"], -1)));
 $response = $consumer->complete('https://' . $_SERVER["SERVER_NAME"] . $scriptPath . '/verify.php');
@@ -13,7 +13,7 @@ $authenticated = false;
 
 if ($response->status == Auth_OpenID_SUCCESS) {
 
-    $ax = new Auth_OpenID_AX_FetchResponse();
+    $ax = new Auth_OpenID_Extension_AX_FetchResponse();
     $obj = $ax->fromSuccessResponse($response);
 	
 	$_SESSION['openid'] = $obj->data;

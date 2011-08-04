@@ -18,7 +18,7 @@
  * uses. It is a single class that provides all of the persistence
  * mechanisms that the OpenID library needs, for both servers and
  * consumers.  If you want to create an SQL-driven store, please see
- * then {@link Auth_OpenID_SQLStore} class.
+ * then {@link Auth_OpenID_Store_SQLStore} class.
  *
  * Change: Version 2.0 removed the storeNonce, getAuthKey, and isDumb
  * methods, and changed the behavior of the useNonce method to support
@@ -27,7 +27,7 @@
  * @package OpenID
  * @author JanRain, Inc. <openid@janrain.com>
  */
-class Auth_OpenID_OpenIDStore {
+interface Auth_OpenID_Store_OpenIDStore {
     /**
      * This method puts an Association object into storage,
      * retrievable by server URL and handle.
@@ -41,11 +41,7 @@ class Auth_OpenID_OpenIDStore {
      *
      * @param Association $association The Association to store.
      */
-    function storeAssociation($server_url, $association)
-    {
-        trigger_error("Auth_OpenID_OpenIDStore::storeAssociation ".
-                      "not implemented", E_USER_ERROR);
-    }
+    function storeAssociation($server_url, $association);
 
     /*
      * Remove expired nonces from the store.
@@ -59,11 +55,7 @@ class Auth_OpenID_OpenIDStore {
      *
      * @return the number of nonces expired
      */
-    function cleanupNonces()
-    {
-        trigger_error("Auth_OpenID_OpenIDStore::cleanupNonces ".
-                      "not implemented", E_USER_ERROR);
-    }
+    function cleanupNonces();
 
     /*
      * Remove expired associations from the store.
@@ -74,11 +66,7 @@ class Auth_OpenID_OpenIDStore {
      *
      * @return the number of associations expired.
      */
-    function cleanupAssociations()
-    {
-        trigger_error("Auth_OpenID_OpenIDStore::cleanupAssociations ".
-                      "not implemented", E_USER_ERROR);
-    }
+    function cleanupAssociations();
 
     /*
      * Shortcut for cleanupNonces(), cleanupAssociations().
@@ -87,19 +75,12 @@ class Auth_OpenID_OpenIDStore {
      * library.  It provides a way for store admins to keep their
      * storage from filling up with expired data.
      */
-    function cleanup()
-    {
-        return array($this->cleanupNonces(),
-                     $this->cleanupAssociations());
-    }
+    function cleanup();
 
     /**
      * Report whether this storage supports cleanup
      */
-    function supportsCleanup()
-    {
-        return true;
-    }
+    function supportsCleanup();
 
     /**
      * This method returns an Association object from storage that
@@ -131,11 +112,7 @@ class Auth_OpenID_OpenIDStore {
      * @return Association The Association for the given identity
      * server.
      */
-    function getAssociation($server_url, $handle = null)
-    {
-        trigger_error("Auth_OpenID_OpenIDStore::getAssociation ".
-                      "not implemented", E_USER_ERROR);
-    }
+    function getAssociation($server_url, $handle = null);
 
     /**
      * This method removes the matching association if it's found, and
@@ -155,11 +132,7 @@ class Auth_OpenID_OpenIDStore {
      *
      * @return mixed Returns whether or not the given association existed.
      */
-    function removeAssociation($server_url, $handle)
-    {
-        trigger_error("Auth_OpenID_OpenIDStore::removeAssociation ".
-                      "not implemented", E_USER_ERROR);
-    }
+    function removeAssociation($server_url, $handle);
 
     /**
      * Called when using a nonce.
@@ -180,17 +153,11 @@ class Auth_OpenID_OpenIDStore {
      *
      * @return bool Whether or not the nonce was valid.
      */
-    function useNonce($server_url, $timestamp, $salt)
-    {
-        trigger_error("Auth_OpenID_OpenIDStore::useNonce ".
-                      "not implemented", E_USER_ERROR);
-    }
+    function useNonce($server_url, $timestamp, $salt);
 
     /**
      * Removes all entries from the store; implementation is optional.
      */
-    function reset()
-    {
-    }
+    function reset();
 
 }

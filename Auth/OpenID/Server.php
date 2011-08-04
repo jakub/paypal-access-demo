@@ -2,7 +2,7 @@
 
 /**
  * OpenID server protocol and logic.
- * 
+ *
  * Overview
  *
  * An OpenID server must perform three tasks:
@@ -10,7 +10,7 @@
  *  1. Examine the incoming request to determine its nature and validity.
  *  2. Make a decision about how to respond to this request.
  *  3. Format the response according to the protocol.
- * 
+ *
  * The first and last of these tasks may performed by the {@link
  * Auth_OpenID_Server::decodeRequest()} and {@link
  * Auth_OpenID_Server::encodeResponse} methods.  Who gets to do the
@@ -37,7 +37,7 @@
  * {@link Auth_OpenID_Server::handleRequest()}.
  *
  * OpenID Extensions
- * 
+ *
  * Do you want to provide other information for your users in addition
  * to authentication?  Version 1.2 of the OpenID protocol allows
  * consumers to add extensions to their requests.  For example, with
@@ -69,9 +69,9 @@
  * store interface is defined in Interface.php.  Additionally, several
  * concrete store implementations are provided, so that most sites
  * won't need to implement a custom store.  For a store backed by flat
- * files on disk, see {@link Auth_OpenID_FileStore}.  For stores based
+ * files on disk, see {@link Auth_OpenID_Store_FileStore}.  For stores based
  * on MySQL, SQLite, or PostgreSQL, see the {@link
- * Auth_OpenID_SQLStore} subclasses.
+ * Auth_OpenID_Store_SQLStore} subclasses.
  *
  * Upgrading
  *
@@ -661,7 +661,7 @@ class Auth_OpenID_AssociateRequest extends Auth_OpenID_Request {
         $response->fields->updateArgs(Auth_OpenID_OPENID_NS,
            $this->session->answer($assoc->secret));
 
-        if (! ($this->session->session_type == 'no-encryption' 
+        if (! ($this->session->session_type == 'no-encryption'
                && $this->message->isOpenID1())) {
             $response->fields->setArg(Auth_OpenID_OPENID_NS,
                                       'session_type',
@@ -733,7 +733,7 @@ class Auth_OpenID_CheckIDRequest extends Auth_OpenID_Request {
      * deprecated since version 2.0.2
      */
     var $namespace;
-    
+
     static function make($message, $identity, $return_to, $trust_root = null,
                   $immediate = false, $assoc_handle = null, $server = null)
     {
@@ -872,13 +872,13 @@ class Auth_OpenID_CheckIDRequest extends Auth_OpenID_Request {
         } else {
             $trust_root_param = 'realm';
         }
-        $trust_root = $message->getArg(Auth_OpenID_OPENID_NS, 
+        $trust_root = $message->getArg(Auth_OpenID_OPENID_NS,
                                        $trust_root_param);
         if (! $trust_root) {
             $trust_root = $return_to;
         }
 
-        if (! $message->isOpenID1() && 
+        if (! $message->isOpenID1() &&
             ($return_to === null) &&
             ($trust_root === null)) {
             return new Auth_OpenID_ServerError($message,
@@ -1195,16 +1195,15 @@ class Auth_OpenID_ServerResponse {
       global $_Auth_OpenID_Request_Modes;
 
         if (in_array($this->request->mode, $_Auth_OpenID_Request_Modes)) {
-            if ($this->fields->isOpenID2() &&
-                (strlen($this->encodeToURL()) >
-                   Auth_OpenID_OPENID1_URL_LIMIT)) {
+            if ($this->fields->isOpenID2()){
                 return Auth_OpenID_ENCODE_HTML_FORM;
-            } else {
-                return Auth_OpenID_ENCODE_URL;
             }
-        } else {
-            return Auth_OpenID_ENCODE_KVFORM;
+            if (strlen($this->encodeToURL()) > Auth_OpenID_OPENID1_URL_LIMIT) {
+                return Auth_OpenID_ENCODE_HTML_FORM;
+            }
+            return Auth_OpenID_ENCODE_URL;
         }
+        return Auth_OpenID_ENCODE_KVFORM;
     }
 
     /*
@@ -1653,11 +1652,11 @@ class Auth_OpenID_UntrustedReturnURL extends Auth_OpenID_ServerError {
  * Auth_OpenID_SigningEncoder::encode()} through my methods {@link
  * decodeRequest} and {@link encodeResponse}.
  *
- * All my state is encapsulated in an {@link Auth_OpenID_OpenIDStore}.
+ * All my state is encapsulated in an {@link Auth_OpenID_Store_OpenIDStore}.
  *
  * Example:
  *
- * <pre> $oserver = new Auth_OpenID_Server(Auth_OpenID_FileStore($data_path),
+ * <pre> $oserver = new Auth_OpenID_Server(Auth_OpenID_Store_FileStore($data_path),
  *                                   "http://example.com/op");
  * $request = $oserver->decodeRequest();
  * if (in_array($request->mode, array('checkid_immediate',
@@ -1704,7 +1703,7 @@ class Auth_OpenID_Server {
     {
         if (method_exists($this, "openid_" . $request->mode)) {
             $handler = array($this, "openid_" . $request->mode);
-            return call_user_func($handler, &$request);
+            return call_user_func($handler, $request);
         }
         return null;
     }
