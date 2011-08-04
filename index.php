@@ -1,5 +1,7 @@
 <?php
 
+require_once "Auth/OpenID/Extension/PAPE.php";
+
 session_start();
 
 if (isset($_GET['session']) && $_GET['session'] === 'delete') {
@@ -48,24 +50,58 @@ if (isset($_GET['session']) && $_GET['session'] === 'delete') {
 	</form>
 </div>
 
-<?php if (isset($_SESSION['openid'])) { ?>
+<?php if (isset($_SESSION['openid_ax'])) { ?>
 
 	<div id="user">
-	<h2>Welcome, <?php echo $_SESSION['openid']['http://axschema.org/namePerson/first'][0] ?></h2>	
+	<h2>Welcome, <?php echo htmlentities($_SESSION['openid_ax']['http://axschema.org/namePerson/first'][0]); ?></h2>	
 	<p class="aside"><a href="index.php?session=delete">Delete session data</a></p>
 	
 	<table>
 	
 	<?php 	
 		$c = 0;
-		foreach ($_SESSION['openid'] as $key => $value) {
+		foreach ($_SESSION['openid_ax'] as $key => $value) {
 			if ($value) {
-				echo "<tr class='" . (($c++%2==1) ? 'odd' : 'even') . "'><td>" . $key . "</td><td>" . $value[0] . "</td></tr>";
+				echo "<tr class='" . (($c++%2==1) ? 'odd' : 'even') . "'><td>" . htmlentities($key) . "</td><td>" . htmlentities($value[0]) . "</td></tr>";
 			} else {
-				echo "<tr class='" . (($c++%2==1) ? 'odd' : 'even') . "'><td>" . $key . "</td><td></td></tr>";
+				echo "<tr class='" . (($c++%2==1) ? 'odd' : 'even') . "'><td>" . htmlentities($key) . "</td><td></td></tr>";
 			}
-		}	
-	?>	
+		}
+		
+		
+	?>
+	</table>
+	<?php
+		
+	// check PAPE as well
+	
+	if (isset($_SESSION['openid_pape'])) {	
+		$pape = $_SESSION['openid_pape'];
+		
+		// check specific policies
+		if ($pape->auth_policies) {
+			$c = 0;
+			echo "<h3>PAPE policies used</h3><table>";
+			foreach ($pape->auth_policies as $uri) {
+				$escaped_uri = htmlentities($uri);
+				echo "<tr class='" . (($c++%2==1) ? 'odd' : 'even') . "'><td colspan='2'>$escaped_uri</td></tr>";
+			}
+			echo "</table>";
+		} else {
+			echo "<tr><td colspan='2'>No PAPE policies were applied during authentication.</td></tr>";
+		}
+		
+		if ($pape->auth_time) {
+			$age = htmlentities($pape->auth_time);
+			echo "<h3>Last authentication time</h3><table>";
+			echo"<tr><td colspan='2'>The authentication age returned by the server is: $age</td></tr>";
+			echo "</table>";
+		}		
+	
+	}
+	
+	?>		
+	
 	</table>
 	</div>
 	

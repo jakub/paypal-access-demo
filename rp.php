@@ -12,6 +12,7 @@ $oid_identifier = 'https://www.paypal.com/webapps/auth/server';
 require_once "Auth/OpenID/Consumer.php";
 require_once "Auth/OpenID/Store/FileStore.php";
 require_once "Auth/OpenID/Extension/AX.php";
+require_once "Auth/OpenID/Extension/PAPE.php";
 
 session_start();
 
@@ -21,6 +22,23 @@ $store = new Auth_OpenID_Store_FileStore('./tmp');
 
 $consumer = new Auth_OpenID_Consumer($store);
 $auth = $consumer->begin($oid_identifier);
+
+// add PAPE extensions
+// request everything, see what we get back
+
+$pape_policy_uris = array (
+	PAPE_AUTH_PHISHING_RESISTANT,
+	PAPE_AUTH_MULTI_FACTOR,
+	PAPE_AUTH_MULTI_FACTOR_PHYSICAL,
+);
+
+$max_auth_age = 7200; // 2 hours
+
+$pape_request = new Auth_OpenID_PAPE_Request($policy_uris, $max_auth_age);
+
+if ($pape_request) {
+	$auth->addExtension($pape_request);
+}
 
 // Required AX attributes to request
 // PayPal will not return attributes marked as optional

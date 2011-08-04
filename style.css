@@ -21,12 +21,23 @@ h2 {
 	float: left;
 }
 
+h3 {
+	font-size: 0.9em;
+	margin: 1em 0 1em 0;
+	font-weight: bold;
+	float: left;
+}
+
 a {
 	color: #900;
 }
 
 p, div {
 	margin-bottom: 1em;
+}
+
+b, strong {
+	font-weight: bold;
 }
 
 .aside {

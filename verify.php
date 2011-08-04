@@ -3,6 +3,7 @@
 require_once "Auth/OpenID/Consumer.php";
 require_once "Auth/OpenID/Store/FileStore.php";
 require_once "Auth/OpenID/Extension/AX.php";
+require_once "Auth/OpenID/Extension/PAPE.php";
 
 session_start();
 $store = new Auth_OpenID_Store_FileStore('./tmp');
@@ -12,24 +13,25 @@ $response = $consumer->complete('https://' . $_SERVER["SERVER_NAME"] . $scriptPa
 $authenticated = false;
 
 if ($response->status == Auth_OpenID_SUCCESS) {
-
     $ax = new Auth_OpenID_Extension_AX_FetchResponse();
-    $obj = $ax->fromSuccessResponse($response);
-	
-	$_SESSION['openid'] = $obj->data;
-	$authenticated = true;
-	
-	echo "<p>User has been authenticated!</p>";
-
-} else {
-	
-	echo "<p>User has not been authenticated.</p>";
+    $obj = $ax->fromSuccessResponse($response);	
+	$_SESSION['openid_ax'] = $obj->data;	
+	$pape = Auth_OpenID_PAPE_Response::fromSuccessResponse($response);	
+	if ($pape) {
+		$_SESSION['openid_pape'] = $pape;	
+	}
+	$msg = "User has been authenticated!";
+} elseif ($response->status == Auth_OpenID_CANCEL) {	
+	$msg = "User cancelled authentication.";
+} else {	
+	$msg = "User has not been authenticated.";
 }
 
 if (isset($_GET['popup'])) {
 
 ?>
 
+<h1><?php echo $msg; ?></h1>
 <p><i>This window will be closed in 5 seconds.</i></p>
 
 <script>
