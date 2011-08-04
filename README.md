@@ -13,9 +13,9 @@ This application doesn't have many requirements, merely pitfalls and gotchas.
  - DOM
  - A suitable backing store for associations (mysqli, memcached, etc. If not, disk will do.)
 
-By default, the application is configured for file storage, using the `tmp` directory. Your web server should be able to write to this directory.
+By default, the application is configured for file storage, using the `tmp` directory. Your web server should be allowed to write to this directory.
 
-(I didn't realise until later that the JanRain PHP library isn't maintained anymore. So it's been updated to use https://github.com/mouns/php-openid by https://github.com/nathanaelle instead.)
+*(I didn't realise until later that the JanRain PHP library isn't maintained anymore. So it's been updated to use https://github.com/mouns/php-openid by https://github.com/nathanaelle instead.)*
 
 ## URL Whitelisting
 
@@ -28,3 +28,13 @@ You'll need to obtain a whitelisted URL by submitting an application request at 
 ## Windows
 
 If using CURL to make HTTP requests, please ensure your system knows about common certificate roots. When testing with WAMP, the CURL library doesn't understand PayPal's SSL certificate and chokes. If CURL is disabled, it'll use `fsockopen` or something equally terrible.
+
+There's also this delightful modification to `Auth/OpenID/CryptUtil.php`, as php-openid will also complain about a lack of `/dev/urandom`.
+
+```php
+if (strpos(strtoupper(php_uname('s')), 'WIN') !== false) {
+    define('Auth_OpenID_RAND_SOURCE',  null);
+} else {
+    define('Auth_OpenID_RAND_SOURCE', '/dev/urandom');
+}
+```
