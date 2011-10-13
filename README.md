@@ -1,6 +1,8 @@
-# paypal-identity-demo
+# paypal-access-demo
 
-A simple demo application that uses the JanRain PHP OpenID library to authenticate against PayPal's Identity service.
+A simple demo application that uses the JanRain PHP OpenID library to authenticate against PayPal's Access service.
+
+*Note: this demo currently demonstrates the user experience for the OpenID login functionality. The rest will probably come as and when it's released.*
 
 ## Installation
 
