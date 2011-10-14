@@ -25,16 +25,16 @@ if (isset($_GET['session']) && $_GET['session'] === 'delete') {
 
 <head>
 	<meta charset="utf-8">
-	<title>PayPal Identity Demo - PHP with Janrain library</title>
+	<title>PayPal Access Demo - PHP with Janrain library</title>
 	<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1>PayPal Identity Demo</h1>
+<h1>PayPal Access Demo</h1>
 
 <div class="aside">
-	<p>A <a href="https://github.com/jakub/paypal-identity-demo">PHP example</a> using the <a href="http://www.janrain.com/openid-enabled">open-source Janrain library</a>.</p>
+	<p>A <a href="https://github.com/jakub/paypal-access-demo">PHP example</a> using the <a href="http://www.janrain.com/openid-enabled">open-source Janrain library</a>.</p>
 	<p>Note: you must have JavaScript enabled.</p>
 </div>
 
