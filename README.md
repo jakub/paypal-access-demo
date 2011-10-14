@@ -2,6 +2,8 @@
 
 A simple demo application that uses the JanRain PHP OpenID library to authenticate against PayPal's Access service.
 
+* https://www.x.com/identity
+
 *Note: this demo currently demonstrates the user experience for the OpenID login functionality. The rest will probably come as and when it's released.*
 
 ## Installation
@@ -21,7 +23,7 @@ By default, the application is configured for file storage, using the `tmp` dire
 
 ## URL Whitelisting
 
-You'll need to obtain a whitelisted URL by submitting an application request at https://www.x.com/create-appvetting-app!input.jspa
+You'll need to obtain a whitelisted URL by submitting an application request at https://www.x.com/products/access/applications/submit
 
 * Your openid.realm must be in the form of https://www.domain.com - don't include a trailing slash, port number, path, or anything else
 
