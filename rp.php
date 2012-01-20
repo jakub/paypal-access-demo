@@ -67,6 +67,8 @@ $attribute[] = Auth_OpenID_Extension_AX_AttrInfo::make('http://axschema.org/pref
 // PayPal specific attributes
 $attribute[] = Auth_OpenID_Extension_AX_AttrInfo::make('https://www.paypal.com/webapps/auth/schema/verifiedAccount', 1, 1);
 $attribute[] = Auth_OpenID_Extension_AX_AttrInfo::make('https://www.paypal.com/webapps/auth/schema/payerID', 1, 1);
+$attribute[] = Auth_OpenID_Extension_AX_AttrInfo::make('https://www.paypal.com/webapps/auth/schema/accountType', 1, 1);
+$attribute[] = Auth_OpenID_Extension_AX_AttrInfo::make('https://www.paypal.com/webapps/auth/schema/accountCreationDate', 1, 1);
 
 $ax = new Auth_OpenID_Extension_AX_FetchRequest;
 
